@@ -8,15 +8,11 @@ const port = process.env.PORT || 3000;
 app.use(express.json());
 app.use('/api', routes);
 
-if (require.main === module) {
-  sequelize.sync().then(() => {
-    console.log('Database synchronized');
-    app.listen(port, () => {
-      console.log(`Server is running on port ${port}`);
-    });
-  }).catch(err => {
-    console.error('Unable to synchronize the database:', err);
+sequelize.sync().then(() => {
+  console.log('Database synchronized');
+  app.listen(port, () => {
+    console.log(`Server is running on port ${port}`);
   });
-}
-
-module.exports = app;
+}).catch(err => {
+  console.error('Unable to synchronize the database:', err);
+});
