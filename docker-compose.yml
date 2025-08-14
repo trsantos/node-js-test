@@ -28,6 +28,8 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    ports:
+      - "3306:3306"
     environment:
       MARIADB_USER: user
       MARIADB_PASSWORD: password
