@@ -63,7 +63,12 @@ class ProjectController {
       const project = await projectService.getGithubRepos(req.params.id, req.params.username);
       res.status(200).json(project);
     } catch (error) {
-      res.status(500).json({ error: error.message });
+      // Check if the error is from the GitHub API call
+      if (error.message === 'GitHub API error') {
+        res.status(500).json({ error: 'Failed to fetch GitHub repositories' });
+      } else {
+        res.status(500).json({ error: error.message });
+      }
     }
   }
 }
