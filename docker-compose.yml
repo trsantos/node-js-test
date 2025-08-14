@@ -19,6 +19,8 @@ services:
       DB_NAME: database
       CACHE_HOST: cache
       CACHE_PORT: 6379
+    networks:
+      - app-network
 
   db:
     image: mariadb:lts
@@ -34,8 +36,11 @@ services:
       MARIADB_USER: user
       MARIADB_PASSWORD: password
       MARIADB_DATABASE: database
+      MARIADB_ROOT_PASSWORD: root_password
     volumes:
       - db_data:/var/lib/mysql
+    networks:
+      - app-network
 
   cache:
     image: valkey/valkey:latest
@@ -49,7 +54,13 @@ services:
       - "6380:6379"
     volumes:
       - cache_data:/data
+    networks:
+      - app-network
 
 volumes:
   db_data:
   cache_data:
+
+networks:
+  app-network:
+    driver: bridge

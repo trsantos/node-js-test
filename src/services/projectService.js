@@ -31,6 +31,11 @@ class ProjectService {
       const response = await axios.get(`https://api.github.com/users/${username}/repos?sort=updated&per_page=5`);
       repos = response.data.map(repo => ({ name: repo.name, description: repo.description, url: repo.html_url }));
       await cache.set(cacheKey, JSON.stringify(repos), 'EX', 600);
+
+      const project = await projectRepository.findById(projectId);
+      if (project) {
+        await projectRepository.update(projectId, { githubRepos: repos });
+      }
     }
 
     const project = await projectRepository.findById(projectId);
@@ -38,8 +43,7 @@ class ProjectService {
       throw new Error('Project not found');
     }
 
-    // This is a simplified version. In a real application, you would probably want to store this relationship in the database.
-    project.githubRepos = JSON.parse(repos);
+    project.githubRepos = typeof repos === 'string' ? JSON.parse(repos) : repos;
     return project;
   }
 }

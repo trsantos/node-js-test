@@ -8,6 +8,11 @@ const Project = sequelize.define('Project', {
   },
   description: {
     type: DataTypes.TEXT
+  },
+  githubRepos: {
+    type: DataTypes.JSON,
+    allowNull: true,
+    defaultValue: []
   }
 });
 
