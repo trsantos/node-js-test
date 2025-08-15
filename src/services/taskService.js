@@ -5,7 +5,9 @@ class TaskService {
   async create(data) {
     const project = await projectRepository.findById(data.ProjectId);
     if (!project) {
-      throw new Error('Project not found');
+      const err = new Error('Project not found');
+      err.statusCode = 404;
+      throw err;
     }
     return await taskRepository.create(data);
   }
