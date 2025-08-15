@@ -19,8 +19,6 @@ services:
       DB_NAME: database
       CACHE_HOST: cache
       CACHE_PORT: 6379
-    networks:
-      - app-network
 
   db:
     image: mariadb:lts
@@ -30,7 +28,6 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-
     environment:
       MARIADB_USER: user
       MARIADB_PASSWORD: password
@@ -38,8 +35,6 @@ services:
       MARIADB_ROOT_PASSWORD: root_password
     volumes:
       - db_data:/var/lib/mysql
-    networks:
-      - app-network
 
   cache:
     image: valkey/valkey:latest
@@ -49,16 +44,9 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-
     volumes:
       - cache_data:/data
-    networks:
-      - app-network
 
 volumes:
   db_data:
   cache_data:
-
-networks:
-  app-network:
-    driver: bridge
