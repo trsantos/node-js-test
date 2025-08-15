@@ -258,15 +258,14 @@ describe('Projects API', () => {
   });
 
   // Input sanitization tests for projects
-  it('should sanitize HTML in project name', async () => {
+  it('should reject project names with invalid characters', async () => {
     const maliciousName = '<script>alert("xss")</script>Project Name';
     const newProject = { name: maliciousName, description: 'Safe description' };
     const response = await request(server).post('/api/projects').send(newProject);
 
-    expect(response.status).toBe(201);
-    // HTML should be escaped, not executed
-    expect(response.body.name).toContain('&lt;script&gt;');
-    expect(response.body.name).toContain('Project Name');
+    expect(response.status).toBe(400);
+    expect(response.body).toHaveProperty('errors');
+    expect(response.body.errors[0].msg).toBe('Project name contains invalid characters');
   });
 
   it('should sanitize HTML in project description', async () => {
@@ -294,16 +293,26 @@ describe('Projects API', () => {
     expect(response.status).toBe(400);
   });
 
-  it('should handle large payloads gracefully', async () => {
-    const largeDescription = 'A'.repeat(10000); // 10KB description
-    const newProject = {
-      name: 'Project with Large Description',
-      description: largeDescription,
-    };
+  it('should accept valid project names with allowed characters', async () => {
+    const validName = 'My Project-2024_v1.0 (Beta)!';
+    const newProject = { name: validName, description: 'Valid project' };
     const response = await request(server).post('/api/projects').send(newProject);
 
     expect(response.status).toBe(201);
-    expect(response.body.description).toHaveLength(10000);
+    expect(response.body.name).toBe(validName);
+  });
+
+  it('should reject descriptions that are too long', async () => {
+    const tooLongDescription = 'A'.repeat(2001); // Exceeds 2000 character limit
+    const newProject = {
+      name: 'Project with Long Description',
+      description: tooLongDescription,
+    };
+    const response = await request(server).post('/api/projects').send(newProject);
+
+    expect(response.status).toBe(400);
+    expect(response.body).toHaveProperty('errors');
+    expect(response.body.errors[0].msg).toBe('Description must not exceed 2000 characters');
   });
 
   // Additional GitHub integration edge cases

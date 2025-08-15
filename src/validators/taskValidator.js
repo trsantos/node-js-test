@@ -1,8 +1,19 @@
 const { body } = require('express-validator');
 
 const createTaskValidation = [
-  body('title').notEmpty().withMessage('Task title is required').trim().escape(),
-  body('description').optional().trim().escape(),
+  body('title')
+    .trim()
+    .notEmpty()
+    .withMessage('Task title is required')
+    .isLength({ min: 1, max: 255 })
+    .withMessage('Task title must be between 1 and 255 characters')
+    .escape(),
+  body('description')
+    .optional({ nullable: true })
+    .trim()
+    .isLength({ max: 2000 })
+    .withMessage('Description must not exceed 2000 characters')
+    .escape(),
   body('status')
     .optional()
     .isIn(['pending', 'in-progress', 'completed'])
@@ -10,8 +21,20 @@ const createTaskValidation = [
 ];
 
 const updateTaskValidation = [
-  body('title').optional().notEmpty().withMessage('Task title cannot be empty').trim().escape(),
-  body('description').optional().trim().escape(),
+  body('title')
+    .optional()
+    .trim()
+    .notEmpty()
+    .withMessage('Task title cannot be empty')
+    .isLength({ min: 1, max: 255 })
+    .withMessage('Task title must be between 1 and 255 characters')
+    .escape(),
+  body('description')
+    .optional({ nullable: true })
+    .trim()
+    .isLength({ max: 2000 })
+    .withMessage('Description must not exceed 2000 characters')
+    .escape(),
   body('status')
     .optional()
     .isIn(['pending', 'in-progress', 'completed'])
