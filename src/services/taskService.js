@@ -1,5 +1,5 @@
 const taskRepository = require('../repositories/taskRepository');
-const projectRepository = require('../repositories/projectRepository'); // Import projectRepository
+const projectRepository = require('../repositories/projectRepository');
 
 class TaskService {
   async create(data) {
