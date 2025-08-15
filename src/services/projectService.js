@@ -25,26 +25,29 @@ class ProjectService {
 
     async getGithubRepos(projectId, username) {
     const cacheKey = `github:${username}`;
-    let project = await projectRepository.findById(projectId); // Fetch project once
+    const project = await projectRepository.findById(projectId);
     if (!project) {
       throw new Error('Project not found');
     }
 
-    let repos = await cache.get(cacheKey);
-
-    if (repos) { // If cache hit, parse it immediately
-      repos = JSON.parse(repos);
-    } else { // If cache miss
-      const response = await axios.get(`https://api.github.com/users/${username}/repos?sort=updated&per_page=5`);
-      repos = response.data.map(repo => ({ name: repo.name, description: repo.description, url: repo.html_url }));
-      await cache.set(cacheKey, JSON.stringify(repos), 'EX', 600);
-
-      // Update project in DB only if new repos were fetched
-      await projectRepository.update(projectId, { githubRepos: repos });
+    const cachedRepos = await cache.get(cacheKey);
+    if (cachedRepos) {
+      project.githubRepos = JSON.parse(cachedRepos);
+      return project;
     }
 
-    project.githubRepos = repos; // 'repos' is guaranteed to be a JavaScript array/object here
-    return project;
+    try {
+      const response = await axios.get(`https://api.github.com/users/${username}/repos?sort=updated&per_page=5`);
+      const repos = response.data.map(repo => ({ name: repo.name, description: repo.description, url: repo.html_url }));
+      await cache.set(cacheKey, JSON.stringify(repos), 'EX', 600);
+      await projectRepository.update(projectId, { githubRepos: repos });
+      project.githubRepos = repos;
+      return project;
+    } catch (error) {
+      const err = new Error('Failed to fetch GitHub repositories');
+      err.statusCode = 500;
+      throw err;
+    }
   }
 }
 
