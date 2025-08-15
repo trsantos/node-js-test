@@ -3,25 +3,25 @@ const { ForeignKeyConstraintError, ValidationError } = require('sequelize');
 
 class TaskController {
   async create(req, res, next) {
-    const { title, description, status } = req.body;
-    const projectId = req.params.projectId;
+    try {
+      const { title, description, status } = req.body;
+      const projectId = req.params.projectId;
 
-    taskService
-      .create({ title, description, status, ProjectId: projectId })
-      .then((task) => res.status(201).json(task))
-      .catch((error) => {
-        if (error instanceof ForeignKeyConstraintError || error.message === 'Project not found') {
-          const err = new Error('Project not found');
-          err.statusCode = 404;
-          return next(err);
-        }
-        if (error instanceof ValidationError) {
-          const err = new Error(error.errors.map((e) => e.message).join(', '));
-          err.statusCode = 400;
-          return next(err);
-        }
-        next(error);
-      });
+      const task = await taskService.create({ title, description, status, ProjectId: projectId });
+      res.status(201).json(task);
+    } catch (error) {
+      if (error instanceof ForeignKeyConstraintError || error.message === 'Project not found') {
+        const err = new Error('Project not found');
+        err.statusCode = 404;
+        return next(err);
+      }
+      if (error instanceof ValidationError) {
+        const err = new Error(error.errors.map((e) => e.message).join(', '));
+        err.statusCode = 400;
+        return next(err);
+      }
+      next(error);
+    }
   }
 
   async update(req, res, next) {
