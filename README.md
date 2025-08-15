@@ -92,89 +92,24 @@ All API endpoints are prefixed with `/api`.
 
 ### Projects
 
-- **Create a new project**
-  - `POST /api/projects`
-  - **Body:** `{"name": "My New Project", "description": "A description of my new project."}`
-  - **Example:**
-    ```bash
-    curl -X POST -H "Content-Type: application/json" -d '{"name": "My New Project", "description": "A description of my new project."}' http://localhost:3000/api/projects
-    ```
-
-- **List all projects**
-  - `GET /api/projects`
-  - **Example:**
-    ```bash
-    curl http://localhost:3000/api/projects
-    ```
-
-- **Get a project by ID**
-  - `GET /api/projects/:id`
-  - **Example:**
-    ```bash
-    curl http://localhost:3000/api/projects/1
-    ```
-
-- **Update a project**
-  - `PUT /api/projects/:id`
-  - **Body:** `{"name": "Updated Project Name"}` (or any other field to update)
-  - **Example:**
-    ```bash
-    curl -X PUT -H "Content-Type: application/json" -d '{"name": "Updated Project Name"}' http://localhost:3000/api/projects/1
-    ```
-
-- **Delete a project**
-  - `DELETE /api/projects/:id`
-  - **Example:**
-    ```bash
-    curl -X DELETE http://localhost:3000/api/projects/1
-    ```
-
-- **Get GitHub repositories for a user (cached)**
-  - `GET /api/projects/:id/github/:username`
-  - **Example:**
-    ```bash
-    curl http://localhost:3000/api/projects/1/github/octocat
-    ```
+| Method   | Endpoint                               | Description                            | Body (Example)                                                          |
+| :------- | :------------------------------------- | :------------------------------------- | :---------------------------------------------------------------------- |
+| `POST`   | `/projects`                            | Create a new project                   | `{"name": "My New Project", "description": "A description..."}`         |
+| `GET`    | `/projects`                            | List all projects                      | N/A                                                                     |
+| `GET`    | `/projects/:id`                        | Get a project by ID                    | N/A                                                                     |
+| `PUT`    | `/projects/:id`                        | Update a project                       | `{"name": "Updated Project Name", "description": "Updated..."}` |
+| `DELETE` | `/projects/:id`                        | Delete a project                       | N/A                                                                     |
+| `GET`    | `/projects/:id/github/:username`       | Get GitHub repositories for a user (cached) | N/A                                                                     |
 
 ### Tasks
 
-- **Create a new task for a project**
-  - `POST /api/projects/:projectId/tasks`
-  - **Body:** `{"title": "New Task", "description": "Description of the new task.", "status": "pending"}`
-  - **Valid statuses:** `pending`, `in-progress`, `completed`
-  - **Example:**
-    ```bash
-    curl -X POST -H "Content-Type: application/json" -d '{"title": "New Task", "description": "Description of the new task.", "status": "pending"}' http://localhost:3000/api/projects/1/tasks
-    ```
-
-- **Get a task by ID**
-  - `GET /api/tasks/:id`
-  - **Example:**
-    ```bash
-    curl http://localhost:3000/api/tasks/1
-    ```
-
-- **Get all tasks for a project**
-  - `GET /api/projects/:projectId/tasks`
-  - **Example:**
-    ```bash
-    curl http://localhost:3000/api/projects/1/tasks
-    ```
-
-- **Update a task**
-  - `PUT /api/tasks/:id`
-  - **Body:** `{"status": "completed"}` (or any other field to update)
-  - **Example:**
-    ```bash
-    curl -X PUT -H "Content-Type: application/json" -d '{"status": "completed"}' http://localhost:3000/api/tasks/1
-    ```
-
-- **Delete a task**
-  - `DELETE /api/tasks/:id`
-  - **Example:**
-    ```bash
-    curl -X DELETE http://localhost:3000/api/tasks/1
-    ```
+| Method   | Endpoint                      | Description                       | Body (Example)                                                                      |
+| :------- | :---------------------------- | :-------------------------------- | :---------------------------------------------------------------------------------- |
+| `POST`   | `/projects/:projectId/tasks`  | Create a new task for a project   | `{"title": "New Task", "description": "Description...", "status": "pending"}` |
+| `GET`    | `/tasks/:id`                  | Get a task by ID                  | N/A                                                                                 |
+| `GET`    | `/projects/:projectId/tasks`  | Get all tasks for a project       | N/A                                                                                 |
+| `PUT`    | `/tasks/:id`                  | Update a task                     | `{"title": "Updated Task", "status": "completed"}`                          |
+| `DELETE` | `/tasks/:id`                  | Delete a task                     | N/A                                                                                 |
 
 ## 💡 Next Steps
 
