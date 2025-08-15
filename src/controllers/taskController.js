@@ -1,56 +1,62 @@
 const taskService = require('../services/taskService');
-const { ForeignKeyConstraintError, ValidationError } = require('sequelize'); // Import specific Sequelize errors
+const { ForeignKeyConstraintError, ValidationError } = require('sequelize');
 
 class TaskController {
-  async create(req, res) {
+  async create(req, res, next) {
     try {
       const { title, description, status } = req.body;
       const projectId = req.params.projectId;
 
       if (!title) {
-        return res.status(400).json({ error: 'Task title is required' });
+        const err = new Error('Task title is required');
+        err.statusCode = 400;
+        return next(err);
       }
 
       const task = await taskService.create({ title, description, status, ProjectId: projectId });
       res.status(201).json(task);
     } catch (error) {
-      if (error instanceof ForeignKeyConstraintError) {
-        res.status(404).json({ message: 'Project not found' });
+      if (error instanceof ForeignKeyConstraintError || error.message === 'Project not found') {
+        const err = new Error('Project not found');
+        err.statusCode = 404;
+        next(err);
       } else if (error instanceof ValidationError) {
-        // For validation errors, extract messages and return 400
-        const errors = error.errors.map(err => err.message);
-        res.status(400).json({ errors });
-      } else if (error.message === 'Project not found') { // Fallback for custom error
-        res.status(404).json({ message: 'Project not found' });
+        const err = new Error(error.errors.map(e => e.message).join(', '));
+        err.statusCode = 400;
+        next(err);
       } else {
-        res.status(500).json({ error: error.message });
+        next(error);
       }
     }
   }
 
-  async update(req, res) {
+  async update(req, res, next) {
     try {
       const task = await taskService.update(req.params.id, req.body);
       if (task) {
         res.status(200).json(task);
       } else {
-        res.status(404).json({ message: 'Task not found' });
+        const err = new Error('Task not found');
+        err.statusCode = 404;
+        next(err);
       }
     } catch (error) {
-      res.status(500).json({ error: error.message });
+      next(error);
     }
   }
 
-  async delete(req, res) {
+  async delete(req, res, next) {
     try {
       const result = await taskService.delete(req.params.id);
       if (result) {
         res.status(204).send();
       } else {
-        res.status(404).json({ message: 'Task not found' });
+        const err = new Error('Task not found');
+        err.statusCode = 404;
+        next(err);
       }
     } catch (error) {
-      res.status(500).json({ error: error.message });
+      next(error);
     }
   }
 }

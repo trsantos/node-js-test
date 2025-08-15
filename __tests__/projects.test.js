@@ -113,7 +113,7 @@ describe('Projects API', () => {
     const response = await request(server).get(`/api/projects/${projectId}/github/${username}`);
 
     expect(response.status).toBe(500);
-    expect(response.body).toHaveProperty('error', 'Failed to fetch GitHub repositories');
+    expect(response.body.error).toHaveProperty('message', 'Failed to fetch GitHub repositories');
   });
 
   it('should return empty array if user has no public repositories', async () => {
@@ -137,14 +137,14 @@ describe('Projects API', () => {
       .send(newProject);
 
     expect(response.status).toBe(400); // Assuming 400 for bad request due to validation
-    expect(response.body).toHaveProperty('error');
+    expect(response.body.error).toHaveProperty('message');
   });
 
   it('should return 404 if fetching a non-existent project by ID', async () => {
     const nonExistentId = projectId + 999; // A likely non-existent ID
     const response = await request(server).get(`/api/projects/${nonExistentId}`);
     expect(response.status).toBe(404);
-    expect(response.body).toHaveProperty('message', 'Project not found');
+    expect(response.body.error).toHaveProperty('message', 'Project not found');
   });
 
   it('should return 404 if updating a non-existent project', async () => {
@@ -154,14 +154,14 @@ describe('Projects API', () => {
       .send({ name: 'Non Existent Project' });
 
     expect(response.status).toBe(404);
-    expect(response.body).toHaveProperty('message', 'Project not found');
+    expect(response.body.error).toHaveProperty('message', 'Project not found');
   });
 
   it('should return 404 if deleting a non-existent project', async () => {
     const nonExistentId = projectId + 999;
     const response = await request(server).delete(`/api/projects/${nonExistentId}`);
     expect(response.status).toBe(404);
-    expect(response.body).toHaveProperty('message', 'Project not found');
+    expect(response.body.error).toHaveProperty('message', 'Project not found');
   });
 
   it('should use cache when fetching GitHub repositories if data is available', async () => {

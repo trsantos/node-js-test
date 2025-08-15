@@ -71,7 +71,7 @@ describe('Tasks API', () => {
       .send(newTask);
 
     expect(response.status).toBe(404);
-    expect(response.body).toHaveProperty('message', 'Project not found');
+    expect(response.body.error).toHaveProperty('message', 'Project not found');
   });
 
   it('should return 400 if creating a task with missing title', async () => {
@@ -83,7 +83,7 @@ describe('Tasks API', () => {
       .send(newTask);
 
     expect(response.status).toBe(400); // Assuming 400 for bad request due to validation
-    expect(response.body).toHaveProperty('error');
+    expect(response.body.error).toHaveProperty('message');
   });
 
   it('should return 404 if updating a non-existent task', async () => {
@@ -93,13 +93,13 @@ describe('Tasks API', () => {
       .send({ title: 'Non Existent Task' });
 
     expect(response.status).toBe(404);
-    expect(response.body).toHaveProperty('message', 'Task not found');
+    expect(response.body.error).toHaveProperty('message', 'Task not found');
   });
 
   it('should return 404 if deleting a non-existent task', async () => {
     const nonExistentTaskId = taskId + 999;
     const response = await request(server).delete(`/api/tasks/${nonExistentTaskId}`);
     expect(response.status).toBe(404);
-    expect(response.body).toHaveProperty('message', 'Task not found');
+    expect(response.body.error).toHaveProperty('message', 'Task not found');
   });
 });
