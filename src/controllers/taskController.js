@@ -25,13 +25,22 @@ class TaskController {
   }
 
   async update(req, res, next) {
-    const task = await taskService.update(req.params.id, req.body);
-    if (task) {
-      res.status(200).json(task);
-    } else {
-      const err = new Error('Task not found');
-      err.statusCode = 404;
-      next(err);
+    try {
+      const task = await taskService.update(req.params.id, req.body);
+      if (task) {
+        res.status(200).json(task);
+      } else {
+        const err = new Error('Task not found');
+        err.statusCode = 404;
+        next(err);
+      }
+    } catch (error) {
+      if (error instanceof ValidationError) {
+        const err = new Error(error.errors.map((e) => e.message).join(', '));
+        err.statusCode = 400;
+        return next(err);
+      }
+      next(error);
     }
   }
 
