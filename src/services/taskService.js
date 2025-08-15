@@ -23,6 +23,10 @@ class TaskService {
   async delete(id) {
     return await taskRepository.delete(id);
   }
+
+  async findByProject(projectId) {
+    return await taskRepository.findByProject(projectId);
+  }
 }
 
 module.exports = new TaskService();

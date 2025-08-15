@@ -25,6 +25,10 @@ class TaskRepository {
     }
     return false;
   }
+
+  async findByProject(projectId) {
+    return await Task.findAll({ where: { ProjectId: projectId } });
+  }
 }
 
 module.exports = new TaskRepository();

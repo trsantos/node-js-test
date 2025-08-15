@@ -9,6 +9,22 @@ class TaskController {
     res.status(201).json(task);
   }
 
+  async findById(req, res, next) {
+    const task = await taskService.findById(req.params.id);
+    if (task) {
+      res.status(200).json(task);
+    } else {
+      const err = new Error('Task not found');
+      err.statusCode = 404;
+      next(err);
+    }
+  }
+
+  async findByProject(req, res, next) {
+    const tasks = await taskService.findByProject(req.params.projectId);
+    res.status(200).json(tasks);
+  }
+
   async update(req, res, next) {
     const task = await taskService.update(req.params.id, req.body);
     if (task) {

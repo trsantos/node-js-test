@@ -25,6 +25,8 @@ router.post(
   handleValidationErrors,
   taskController.create
 );
+router.get('/projects/:projectId/tasks', taskController.findByProject);
+router.get('/tasks/:id', taskController.findById);
 router.put('/tasks/:id', updateTaskValidation, handleValidationErrors, taskController.update);
 router.delete('/tasks/:id', taskController.delete);
 
