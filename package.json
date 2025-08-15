@@ -4,7 +4,7 @@
   "description": "## 🎯 Objetivo Criar uma **API REST** em **Node.js** para gerenciar **projetos e tarefas**, incluindo: - CRUD completo - Integração com API externa - Boas práticas de arquitetura, segurança e performance",
   "main": "index.js",
   "scripts": {
-    "test": "DB_HOST=localhost DB_NAME=database DB_USER=user DB_PASSWORD=password jest",
+    "test": "DB_HOST=localhost DB_NAME=database DB_USER=user DB_PASSWORD=password jest --forceExit",
   "jest": {
     "globalSetup": "./jest-setup/global-setup.js",
     "globalTeardown": "./jest-setup/global-teardown.js"
