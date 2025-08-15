@@ -44,13 +44,15 @@ To run this API locally, you need to have Docker and Docker Compose installed on
 
 2.  **Environment Variables:**
 
-    Create a `.env` file in the root directory of the project with the following content:
+    Copy the environment configuration from the example file:
 
-    ```
-    MARIADB_ROOT_PASSWORD=root_password
+    ```bash
+    cp .env.example .env
     ```
 
-    _Note: This password is used for the MariaDB root user within the Docker environment. For production, use a strong, unique password._
+    The `.env` file contains the required `MARIADB_ROOT_PASSWORD` for the MariaDB root user within the Docker environment.
+
+    _Note: For production deployments, use a strong, unique password._
 
 3.  **Start the services:**
 
@@ -73,6 +75,16 @@ To run this API locally, you need to have Docker and Docker Compose installed on
     ```
 
     You should see an empty array `[]` as a response, indicating the API is up and running.
+
+5.  **Running tests:**
+
+    To run the comprehensive test suite:
+
+    ```bash
+    npm test
+    ```
+
+    This will execute comprehensive tests covering all API endpoints, validation, error handling, and GitHub integration.
 
 ## 📋 API Endpoints
 
@@ -129,9 +141,24 @@ All API endpoints are prefixed with `/api`.
 - **Create a new task for a project**
   - `POST /api/projects/:projectId/tasks`
   - **Body:** `{"title": "New Task", "description": "Description of the new task.", "status": "pending"}`
+  - **Valid statuses:** `pending`, `in-progress`, `completed`
   - **Example:**
     ```bash
     curl -X POST -H "Content-Type: application/json" -d '{"title": "New Task", "description": "Description of the new task.", "status": "pending"}' http://localhost:3000/api/projects/1/tasks
+    ```
+
+- **Get a task by ID**
+  - `GET /api/tasks/:id`
+  - **Example:**
+    ```bash
+    curl http://localhost:3000/api/tasks/1
+    ```
+
+- **Get all tasks for a project**
+  - `GET /api/projects/:projectId/tasks`
+  - **Example:**
+    ```bash
+    curl http://localhost:3000/api/projects/1/tasks
     ```
 
 - **Update a task**
@@ -160,6 +187,31 @@ Here are some potential next steps for improving this project:
 
 ## 🛠️ Development Tools
 
-- **Jest**: A delightful JavaScript Testing Framework with a focus on simplicity.
-- **Supertest**: Super-agent driven library for testing Node.js http servers.
-- **Prettier**: An opinionated code formatter.
+- **Jest**: JavaScript testing framework with comprehensive test suite
+- **Supertest**: HTTP assertion library for testing Node.js servers
+- **Prettier**: Code formatter ensuring consistent style across the codebase
+- **Express-Validator**: Input validation and sanitization middleware
+- **Docker Compose**: Multi-container orchestration for development environment
+
+## ⚡ Features
+
+- **Layered Architecture**: Clean separation between controllers, services, and repositories
+- **Input Validation**: Comprehensive validation with length limits and character restrictions
+- **Caching**: GitHub API responses cached using Valkey for improved performance
+- **Error Handling**: Centralized error handling with user-friendly messages
+- **Security**: Input sanitization and HTML escaping to prevent XSS attacks
+- **Testing**: Extensive test coverage with edge case handling
+- **Docker Support**: Complete containerized development environment
+
+## 📊 Validation Rules
+
+### Projects
+
+- **Name**: Required, 1-255 characters, alphanumeric with safe punctuation only
+- **Description**: Optional, maximum 2000 characters
+
+### Tasks
+
+- **Title**: Required, 1-255 characters
+- **Description**: Optional, maximum 2000 characters
+- **Status**: Must be one of: `pending`, `in-progress`, `completed`

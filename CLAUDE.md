@@ -55,10 +55,15 @@ This is a Node.js/Express REST API following a strict layered architecture patte
 
 ### Validation Rules
 
-- **Projects**: name required on create, optional on update (with sanitization)
-- **Tasks**: title required on create, status validated against enum values
+- **Projects**:
+  - Name: Required on create, 1-255 characters, alphanumeric + safe punctuation only
+  - Description: Optional, max 2000 characters
+- **Tasks**:
+  - Title: Required on create, 1-255 characters
+  - Description: Optional, max 2000 characters
+  - Status: Must be `pending`, `in-progress`, or `completed`
 - All string inputs are trimmed and escaped for security
-- Validation errors return 400 status with detailed messages
+- Validation errors return 400 status with detailed field-specific messages
 
 ### Error Handling Strategy
 
@@ -69,8 +74,31 @@ This is a Node.js/Express REST API following a strict layered architecture patte
 
 ### Environment Configuration
 
-Required environment variables (set via Docker Compose):
+Required environment variables:
 
-- `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, `DB_NAME` - Database connection
-- `CACHE_HOST`, `CACHE_PORT` - Valkey cache connection
-- `NODE_ENV` - Application environment
+**Database Connection:**
+
+- `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, `DB_NAME` - MariaDB connection settings
+
+**Cache Connection:**
+
+- `CACHE_HOST`, `CACHE_PORT` - Valkey cache connection settings
+
+**Application:**
+
+- `NODE_ENV` - Application environment (`development`, `production`, `test`)
+- `MARIADB_ROOT_PASSWORD` - Root password for MariaDB (from `.env` file)
+
+**Setup:** Copy `.env.example` to `.env` before running `docker-compose up`
+
+### API Endpoints Added
+
+**Missing endpoints that were implemented:**
+
+- `GET /api/tasks/:id` - Retrieve individual task by ID
+- `GET /api/projects/:id/tasks` - List all tasks for a specific project
+
+**Complete CRUD coverage:**
+
+- Projects: Create, Read (all/single), Update, Delete + GitHub integration
+- Tasks: Create, Read (single/by-project), Update, Delete
