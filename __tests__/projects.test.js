@@ -138,6 +138,16 @@ describe('Projects API', () => {
     expect(response.body.errors[0].msg).toBe('Project name is required');
   });
 
+  it('should return 400 if updating a project with an empty name', async () => {
+    const project = await Project.create({ name: 'Project to Update', description: '...' });
+    const projectId = project.id;
+    const response = await request(server).put(`/api/projects/${projectId}`).send({ name: '' });
+
+    expect(response.status).toBe(400);
+    expect(response.body).toHaveProperty('errors');
+    expect(response.body.errors[0].msg).toBe('Project name cannot be empty');
+  });
+
   it('should return 404 if fetching a non-existent project by ID', async () => {
     const nonExistentId = projectId + 999; // A likely non-existent ID
     const response = await request(server).get(`/api/projects/${nonExistentId}`);
@@ -200,5 +210,28 @@ describe('Projects API', () => {
     expect(cache.get).toHaveBeenCalledWith(`github:${username}`);
     expect(axios.get).toHaveBeenCalledTimes(1); // axios.get should be called
     expect(cache.set).toHaveBeenCalledTimes(1); // cache.set should be called
+  });
+
+  it('should ignore extra fields when creating a project', async () => {
+    const newProject = {
+      name: 'Project with Extra Fields',
+      description: '...',
+      extraField: 'should be ignored',
+    };
+    const response = await request(server).post('/api/projects').send(newProject);
+
+    expect(response.status).toBe(201);
+    expect(response.body).not.toHaveProperty('extraField');
+  });
+
+  it('should ignore extra fields when updating a project', async () => {
+    const project = await Project.create({ name: 'Project to Update', description: '...' });
+    const projectId = project.id;
+    const response = await request(server)
+      .put(`/api/projects/${projectId}`)
+      .send({ name: 'Updated Name', extraField: 'should be ignored' });
+
+    expect(response.status).toBe(200);
+    expect(response.body).not.toHaveProperty('extraField');
   });
 });

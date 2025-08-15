@@ -94,6 +94,52 @@ describe('Tasks API', () => {
     expect(response.body.errors[0].msg).toBe('Task title is required');
   });
 
+  it('should return 400 if updating a task with an empty title', async () => {
+    const project = await Project.create({ name: 'Project for Task Update', description: '...' });
+    const task = await Task.create({
+      title: 'Task to Update',
+      description: '...',
+      ProjectId: project.id,
+    });
+    const taskId = task.id;
+    const response = await request(server).put(`/api/tasks/${taskId}`).send({ title: '' });
+
+    expect(response.status).toBe(400);
+    expect(response.body).toHaveProperty('errors');
+    expect(response.body.errors[0].msg).toBe('Task title cannot be empty');
+  });
+
+  it('should return 400 if creating a task with an invalid status', async () => {
+    const project = await Project.create({ name: 'Project for Invalid Status', description: '...' });
+    const projectId = project.id;
+    const newTask = { title: 'Task with Invalid Status', status: 'invalid-status' };
+    const response = await request(server).post(`/api/projects/${projectId}/tasks`).send(newTask);
+
+    expect(response.status).toBe(400);
+    expect(response.body).toHaveProperty('errors');
+    expect(response.body.errors[0].msg).toBe('Invalid status value');
+  });
+
+  it('should return 400 if updating a task with an invalid status', async () => {
+    const project = await Project.create({
+      name: 'Project for Invalid Status Update',
+      description: '...',
+    });
+    const task = await Task.create({
+      title: 'Task to Update Status',
+      description: '...',
+      ProjectId: project.id,
+    });
+    const taskId = task.id;
+    const response = await request(server)
+      .put(`/api/tasks/${taskId}`)
+      .send({ status: 'invalid-status' });
+
+    expect(response.status).toBe(400);
+    expect(response.body).toHaveProperty('errors');
+    expect(response.body.errors[0].msg).toBe('Invalid status value');
+  });
+
   it('should return 404 if updating a non-existent task', async () => {
     const nonExistentTaskId = taskId + 999;
     const response = await request(server)
@@ -109,5 +155,23 @@ describe('Tasks API', () => {
     const response = await request(server).delete(`/api/tasks/${nonExistentTaskId}`);
     expect(response.status).toBe(404);
     expect(response.body.error).toHaveProperty('message', 'Task not found');
+  });
+
+  it('should orphan tasks when a project is deleted', async () => {
+    // 1. Create a project and a task
+    const project = await Project.create({ name: 'Project with Tasks', description: '...' });
+    const task = await Task.create({
+      title: 'Task to be Orphaned',
+      description: '...',
+      ProjectId: project.id,
+    });
+
+    // 2. Delete the project
+    await request(server).delete(`/api/projects/${project.id}`);
+
+    // 3. Verify the task still exists but is orphaned
+    const orphanedTask = await Task.findByPk(task.id);
+    expect(orphanedTask).not.toBeNull();
+    expect(orphanedTask.ProjectId).toBeNull();
   });
 });
