@@ -9,7 +9,9 @@ const errorHandler = (err, req, res, next) => {
   }
 
   if (err instanceof ForeignKeyConstraintError) {
-    return res.status(404).json({ error: { message: 'Project not found' } });
+    const field = err.fields?.join(', ') || 'related resource';
+    const message = `The specified ${field} does not exist.`;
+    return res.status(404).json({ error: { message } });
   }
 
   const statusCode = err.statusCode || 500;
