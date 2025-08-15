@@ -1,7 +1,12 @@
 const taskRepository = require('../repositories/taskRepository');
+const projectRepository = require('../repositories/projectRepository'); // Import projectRepository
 
 class TaskService {
   async create(data) {
+    const project = await projectRepository.findById(data.ProjectId);
+    if (!project) {
+      throw new Error('Project not found');
+    }
     return await taskRepository.create(data);
   }
 

@@ -15,15 +15,9 @@ beforeAll((done) => {
 });
 
 beforeEach(async () => {
-  await sequelize.query('SET FOREIGN_KEY_CHECKS = 0');
-  await sequelize.query('TRUNCATE TABLE Projects');
-  await sequelize.query('TRUNCATE TABLE Tasks');
-  await sequelize.query('SET FOREIGN_KEY_CHECKS = 1');
-
-  const project = await Project.create({ name: 'Test Project', description: 'This is a test project.' });
-  projectId = project.id;
-  const task = await Task.create({ title: 'Test Task', description: 'This is a test task.', ProjectId: projectId });
-  taskId = task.id;
+  // Ensure database is ready and clear mocks
+  await new Promise(resolve => setTimeout(resolve, 100)); // Small delay for database readiness
+  jest.clearAllMocks(); // Clear all mocks before each test
 });
 
 afterAll((done) => {
@@ -32,6 +26,8 @@ afterAll((done) => {
 
 describe('Tasks API', () => {
   it('should create a new task for a project', async () => {
+    const project = await Project.create({ name: 'Project for New Task', description: '...' });
+    const projectId = project.id;
     const newTask = { title: 'Another Task', description: 'This is another test task.' };
     const response = await request(server)
       .post(`/api/projects/${projectId}/tasks`)
@@ -45,6 +41,8 @@ describe('Tasks API', () => {
   });
 
   it('should update a task', async () => {
+    const task = await Task.create({ title: 'Task to Update', description: '...', ProjectId: projectId });
+    const taskId = task.id;
     const updatedTitle = 'Updated Task Title';
     const response = await request(server)
       .put(`/api/tasks/${taskId}`)
@@ -55,10 +53,53 @@ describe('Tasks API', () => {
   });
 
   it('should delete a task', async () => {
+    const task = await Task.create({ title: 'Task to Delete', description: '...', ProjectId: projectId });
+    const taskId = task.id;
     const response = await request(server).delete(`/api/tasks/${taskId}`);
     expect(response.status).toBe(204);
 
     const getResponse = await request(server).get(`/api/tasks/${taskId}`);
     expect(getResponse.status).toBe(404);
+  });
+
+  // New tests for error handling and edge cases
+  it('should return 404 if creating a task for a non-existent project', async () => {
+    const nonExistentProjectId = projectId + 999;
+    const newTask = { title: 'Task for non-existent project', description: '...' };
+    const response = await request(server)
+      .post(`/api/projects/${nonExistentProjectId}/tasks`)
+      .send(newTask);
+
+    expect(response.status).toBe(404);
+    expect(response.body).toHaveProperty('message', 'Project not found');
+  });
+
+  it('should return 400 if creating a task with missing title', async () => {
+    const project = await Project.create({ name: 'Project for Missing Title Task', description: '...' });
+    const projectId = project.id;
+    const newTask = { description: 'Task without a title.' };
+    const response = await request(server)
+      .post(`/api/projects/${projectId}/tasks`)
+      .send(newTask);
+
+    expect(response.status).toBe(400); // Assuming 400 for bad request due to validation
+    expect(response.body).toHaveProperty('error');
+  });
+
+  it('should return 404 if updating a non-existent task', async () => {
+    const nonExistentTaskId = taskId + 999;
+    const response = await request(server)
+      .put(`/api/tasks/${nonExistentTaskId}`)
+      .send({ title: 'Non Existent Task' });
+
+    expect(response.status).toBe(404);
+    expect(response.body).toHaveProperty('message', 'Task not found');
+  });
+
+  it('should return 404 if deleting a non-existent task', async () => {
+    const nonExistentTaskId = taskId + 999;
+    const response = await request(server).delete(`/api/tasks/${nonExistentTaskId}`);
+    expect(response.status).toBe(404);
+    expect(response.body).toHaveProperty('message', 'Task not found');
   });
 });
