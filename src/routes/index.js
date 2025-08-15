@@ -14,7 +14,12 @@ const handleValidationErrors = require('../middleware/validationHandler');
 router.post('/projects', createProjectValidation, handleValidationErrors, projectController.create);
 router.get('/projects', projectController.findAll);
 router.get('/projects/:id', projectController.findById);
-router.put('/projects/:id', updateProjectValidation, handleValidationErrors, projectController.update);
+router.put(
+  '/projects/:id',
+  updateProjectValidation,
+  handleValidationErrors,
+  projectController.update
+);
 router.delete('/projects/:id', projectController.delete);
 router.get('/projects/:id/github/:username', projectController.getGithubRepos);
 

@@ -271,9 +271,9 @@ describe('Projects API', () => {
 
   it('should sanitize HTML in project description', async () => {
     const maliciousDescription = '<img src="x" onerror="alert(1)">Project Description';
-    const newProject = { 
+    const newProject = {
       name: 'Safe Project Name',
-      description: maliciousDescription 
+      description: maliciousDescription,
     };
     const response = await request(server).post('/api/projects').send(newProject);
 
@@ -284,7 +284,7 @@ describe('Projects API', () => {
     expect(response.body.description).toContain('Project Description');
   });
 
-  // Content-Type validation tests for projects  
+  // Content-Type validation tests for projects
   it('should handle malformed JSON gracefully', async () => {
     const response = await request(server)
       .post('/api/projects')
@@ -296,9 +296,9 @@ describe('Projects API', () => {
 
   it('should handle large payloads gracefully', async () => {
     const largeDescription = 'A'.repeat(10000); // 10KB description
-    const newProject = { 
+    const newProject = {
       name: 'Project with Large Description',
-      description: largeDescription 
+      description: largeDescription,
     };
     const response = await request(server).post('/api/projects').send(newProject);
 
@@ -308,9 +308,12 @@ describe('Projects API', () => {
 
   // Additional GitHub integration edge cases
   it('should handle GitHub API with empty username', async () => {
-    const project = await Project.create({ name: 'Project for Empty Username', description: '...' });
+    const project = await Project.create({
+      name: 'Project for Empty Username',
+      description: '...',
+    });
     const response = await request(server).get(`/api/projects/${project.id}/github/`);
-    
+
     expect(response.status).toBe(404); // Route not matched
   });
 
@@ -318,8 +321,10 @@ describe('Projects API', () => {
     const project = await Project.create({ name: 'Project for Long Username', description: '...' });
     const longUsername = 'a'.repeat(100);
     axios.get.mockImplementationOnce(() => Promise.reject(new Error('Invalid username')));
-    
-    const response = await request(server).get(`/api/projects/${project.id}/github/${longUsername}`);
+
+    const response = await request(server).get(
+      `/api/projects/${project.id}/github/${longUsername}`
+    );
     expect(response.status).toBe(500);
   });
 

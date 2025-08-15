@@ -109,7 +109,10 @@ describe('Tasks API', () => {
   });
 
   it('should return 400 if creating a task with an invalid status', async () => {
-    const project = await Project.create({ name: 'Project for Invalid Status', description: '...' });
+    const project = await Project.create({
+      name: 'Project for Invalid Status',
+      description: '...',
+    });
     const projectId = project.id;
     const newTask = { title: 'Task with Invalid Status', status: 'invalid-status' };
     const response = await request(server).post(`/api/projects/${projectId}/tasks`).send(newTask);
@@ -199,7 +202,7 @@ describe('Tasks API', () => {
 
   it('should get all tasks for a project', async () => {
     const project = await Project.create({ name: 'Project for Task List', description: '...' });
-    
+
     // Create multiple tasks
     await Task.create({ title: 'Task 1', ProjectId: project.id });
     await Task.create({ title: 'Task 2', ProjectId: project.id });
@@ -223,7 +226,7 @@ describe('Tasks API', () => {
 
   // Status enum validation tests
   const validStatuses = ['pending', 'in-progress', 'completed'];
-  validStatuses.forEach(status => {
+  validStatuses.forEach((status) => {
     it(`should accept valid status: ${status}`, async () => {
       const project = await Project.create({ name: 'Project for Status Test', description: '...' });
       const newTask = { title: `Task with ${status} status`, status };
@@ -237,11 +240,12 @@ describe('Tasks API', () => {
   });
 
   it('should default to pending status when not specified', async () => {
-    const project = await Project.create({ name: 'Project for Default Status', description: '...' });
+    const project = await Project.create({
+      name: 'Project for Default Status',
+      description: '...',
+    });
     const newTask = { title: 'Task without status' };
-    const response = await request(server)
-      .post(`/api/projects/${project.id}/tasks`)
-      .send(newTask);
+    const response = await request(server).post(`/api/projects/${project.id}/tasks`).send(newTask);
 
     expect(response.status).toBe(201);
     expect(response.body.status).toBe('pending');
@@ -267,9 +271,7 @@ describe('Tasks API', () => {
 
   it('should return 400 for non-numeric project ID in task creation', async () => {
     const newTask = { title: 'Task for invalid project' };
-    const response = await request(server)
-      .post('/api/projects/invalid-id/tasks')
-      .send(newTask);
+    const response = await request(server).post('/api/projects/invalid-id/tasks').send(newTask);
     expect(response.status).toBe(404);
   });
 
@@ -284,9 +286,7 @@ describe('Tasks API', () => {
     const project = await Project.create({ name: 'Project for Sanitization', description: '...' });
     const maliciousTitle = '<script>alert("xss")</script>Task Title';
     const newTask = { title: maliciousTitle };
-    const response = await request(server)
-      .post(`/api/projects/${project.id}/tasks`)
-      .send(newTask);
+    const response = await request(server).post(`/api/projects/${project.id}/tasks`).send(newTask);
 
     expect(response.status).toBe(201);
     // HTML should be escaped, not executed
@@ -295,15 +295,16 @@ describe('Tasks API', () => {
   });
 
   it('should sanitize HTML in task description', async () => {
-    const project = await Project.create({ name: 'Project for Description Sanitization', description: '...' });
+    const project = await Project.create({
+      name: 'Project for Description Sanitization',
+      description: '...',
+    });
     const maliciousDescription = '<img src="x" onerror="alert(1)">Description';
-    const newTask = { 
+    const newTask = {
       title: 'Safe Title',
-      description: maliciousDescription 
+      description: maliciousDescription,
     };
-    const response = await request(server)
-      .post(`/api/projects/${project.id}/tasks`)
-      .send(newTask);
+    const response = await request(server).post(`/api/projects/${project.id}/tasks`).send(newTask);
 
     expect(response.status).toBe(201);
     // HTML should be escaped, not executed - checking the actual escaped output
@@ -314,7 +315,10 @@ describe('Tasks API', () => {
 
   // Content-Type validation tests
   it('should handle malformed JSON gracefully', async () => {
-    const project = await Project.create({ name: 'Project for Content-Type Test', description: '...' });
+    const project = await Project.create({
+      name: 'Project for Content-Type Test',
+      description: '...',
+    });
     const response = await request(server)
       .post(`/api/projects/${project.id}/tasks`)
       .send('{"title": "Test", invalid json}')
@@ -322,5 +326,4 @@ describe('Tasks API', () => {
 
     expect(response.status).toBe(400);
   });
-
 });
