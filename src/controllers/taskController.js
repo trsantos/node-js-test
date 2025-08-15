@@ -6,12 +6,6 @@ class TaskController {
     const { title, description, status } = req.body;
     const projectId = req.params.projectId;
 
-    if (!title) {
-      const err = new Error('Task title is required');
-      err.statusCode = 400;
-      return next(err);
-    }
-
     taskService
       .create({ title, description, status, ProjectId: projectId })
       .then((task) => res.status(201).json(task))

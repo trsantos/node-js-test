@@ -134,7 +134,8 @@ describe('Projects API', () => {
     const response = await request(server).post('/api/projects').send(newProject);
 
     expect(response.status).toBe(400); // Assuming 400 for bad request due to validation
-    expect(response.body.error).toHaveProperty('message');
+    expect(response.body).toHaveProperty('errors');
+    expect(response.body.errors[0].msg).toBe('Project name is required');
   });
 
   it('should return 404 if fetching a non-existent project by ID', async () => {

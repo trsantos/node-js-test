@@ -3,11 +3,6 @@ const projectService = require('../services/projectService');
 class ProjectController {
   async create(req, res, next) {
     const { name, description } = req.body;
-    if (!name) {
-      const err = new Error('Project name is required');
-      err.statusCode = 400;
-      return next(err);
-    }
     const project = await projectService.create({ name, description });
     res.status(201).json(project);
   }

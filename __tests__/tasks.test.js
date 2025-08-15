@@ -90,7 +90,8 @@ describe('Tasks API', () => {
     const response = await request(server).post(`/api/projects/${projectId}/tasks`).send(newTask);
 
     expect(response.status).toBe(400); // Assuming 400 for bad request due to validation
-    expect(response.body.error).toHaveProperty('message');
+    expect(response.body).toHaveProperty('errors');
+    expect(response.body.errors[0].msg).toBe('Task title is required');
   });
 
   it('should return 404 if updating a non-existent task', async () => {
