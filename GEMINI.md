@@ -11,6 +11,7 @@ This is a **Project and Task Management API** built with Node.js and Express. It
 - **Valkey**: An open-source, high-performance key-value data store (Redis-compatible) used for caching.
 - **Docker & Docker Compose**: For containerization and orchestration of the application and its services.
 - **Axios**: Promise-based HTTP client for making requests to external APIs (e.g., GitHub).
+- **Express-Validator**: Middleware for input validation.
 
 ## Architecture:
 
@@ -68,9 +69,18 @@ npm test
 
 This command utilizes `jest` and includes global setup and teardown scripts located in `jest-setup/global-setup.js` and `jest-setup/global-teardown.js` respectively.
 
+# Development Tools
+
+- **Jest**: A delightful JavaScript Testing Framework with a focus on simplicity.
+- **Supertest**: Super-agent driven library for testing Node.js http servers.
+- **Prettier**: An opinionated code formatter.
+
 # Development Conventions
 
 - **Layered Architecture**: The project adheres to a clear separation of concerns with `controllers`, `services`, and `repositories` layers.
+- **Input Validation**: All API endpoints that accept input are validated using `express-validator`.
+- **Centralized Error Handling**: A centralized error-handling middleware is used to ensure consistent error responses.
 - **ORM Usage**: Sequelize is used for all database interactions, abstracting raw SQL queries.
 - **Testing**: Jest and Supertest are used for unit and integration testing, with a dedicated setup for global test configurations.
 - **Containerization**: Docker and Docker Compose are used for consistent development and deployment environments.
+- **Code Formatting**: Code is automatically formatted using Prettier.

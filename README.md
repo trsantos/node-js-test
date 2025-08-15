@@ -15,6 +15,7 @@ The main goal of this project is to provide a robust and scalable API for managi
 - **Valkey**: An open-source, high-performance key-value data store (Redis-compatible) used for caching.
 - **Docker & Docker Compose**: For containerization and orchestration of the application and its services.
 - **Axios**: Promise-based HTTP client for making requests to external APIs (e.g., GitHub).
+- **Express-Validator**: Middleware for input validation.
 
 ## 🏗️ Project Structure
 
@@ -156,3 +157,9 @@ Here are some potential next steps for improving this project:
 2.  **Implement a Structured Logger:** Replace the basic `console.error` logging with a more robust, production-ready logger like Pino or Winston. This will enable structured, leveled logging, which is essential for effective monitoring and debugging in a production environment.
 3.  **Expand Test Coverage:** While the current test suite is robust, it could be expanded to include more complex integration scenarios, performance tests, and security-focused tests to identify potential vulnerabilities.
 4.  **Implement Caching for More Endpoints:** Consider adding caching to other frequently accessed, read-only endpoints (e.g., `GET /api/projects/:id`) to further improve performance and reduce database load.
+
+## 🛠️ Development Tools
+
+- **Jest**: A delightful JavaScript Testing Framework with a focus on simplicity.
+- **Supertest**: Super-agent driven library for testing Node.js http servers.
+- **Prettier**: An opinionated code formatter.
