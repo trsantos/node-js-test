@@ -30,13 +30,15 @@ The project follows a layered architecture to ensure separation of concerns and 
 To run this API locally, you need to have Docker and Docker Compose installed.
 
 1.  **Environment Variables:**
-    Create a `.env` file in the root directory of the project with the following content:
+    Copy the environment configuration from the example file:
 
-    ```
-    MARIADB_ROOT_PASSWORD=root_password
+    ```bash
+    cp .env.example .env
     ```
 
-    _Note: This password is used for the MariaDB root user within the Docker environment. For production, use a strong, unique password._
+    The `.env` file contains the required `MARIADB_ROOT_PASSWORD` for the MariaDB root user within the Docker environment.
+
+    _Note: For production deployments, use a strong, unique password._
 
 2.  **Start the services:**
 
@@ -67,13 +69,15 @@ To run the tests, use the following command:
 npm test
 ```
 
-This command utilizes `jest` and includes global setup and teardown scripts located in `jest-setup/global-setup.js` and `jest-setup/global-teardown.js` respectively.
+This will execute comprehensive tests covering all API endpoints, validation, error handling, and GitHub integration.
 
 # Development Tools
 
-- **Jest**: A delightful JavaScript Testing Framework with a focus on simplicity.
-- **Supertest**: Super-agent driven library for testing Node.js http servers.
-- **Prettier**: An opinionated code formatter.
+- **Jest**: JavaScript testing framework with comprehensive test suite
+- **Supertest**: HTTP assertion library for testing Node.js servers
+- **Prettier**: Code formatter ensuring consistent style across the codebase
+- **Express-Validator**: Input validation and sanitization middleware
+- **Docker Compose**: Multi-container orchestration for development environment
 
 # Development Conventions
 
@@ -84,3 +88,26 @@ This command utilizes `jest` and includes global setup and teardown scripts loca
 - **Testing**: Jest and Supertest are used for unit and integration testing, with a dedicated setup for global test configurations.
 - **Containerization**: Docker and Docker Compose are used for consistent development and deployment environments.
 - **Code Formatting**: Code is automatically formatted using Prettier.
+
+## Features
+
+- **Layered Architecture**: Clean separation between controllers, services, and repositories
+- **Input Validation**: Comprehensive validation with length limits and character restrictions
+- **Caching**: GitHub API responses cached using Valkey for improved performance
+- **Error Handling**: Centralized error handling with user-friendly messages
+- **Security**: Input sanitization and HTML escaping to prevent XSS attacks
+- **Testing**: Extensive test coverage with edge case handling
+- **Docker Support**: Complete containerized development environment
+
+## Validation Rules
+
+### Projects
+
+- **Name**: Required, 1-255 characters, alphanumeric with safe punctuation only
+- **Description**: Optional, maximum 2000 characters
+
+### Tasks
+
+- **Title**: Required, 1-255 characters
+- **Description**: Optional, maximum 2000 characters
+- **Status**: Must be one of: `pending`, `in-progress`, `completed`
