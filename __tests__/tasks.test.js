@@ -3,7 +3,6 @@ const app = require('../index');
 const http = require('http');
 const Project = require('../src/models/project');
 const Task = require('../src/models/task');
-const sequelize = require('../src/config/database');
 
 let server;
 let projectId;

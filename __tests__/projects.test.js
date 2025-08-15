@@ -3,7 +3,6 @@ const app = require('../index');
 const http = require('http');
 const Project = require('../src/models/project');
 const axios = require('axios');
-const sequelize = require('../src/config/database');
 const cache = require('../src/config/cache'); // Import cache for mocking
 
 jest.mock('axios');
