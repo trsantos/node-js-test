@@ -39,9 +39,7 @@ afterAll((done) => {
 describe('Projects API', () => {
   it('should create a new project', async () => {
     const newProject = { name: 'Another Project', description: 'This is another test project.' };
-    const response = await request(server)
-      .post('/api/projects')
-      .send(newProject);
+    const response = await request(server).post('/api/projects').send(newProject);
 
     expect(response.status).toBe(201);
     expect(response.body).toHaveProperty('id');
@@ -58,10 +56,11 @@ describe('Projects API', () => {
   });
 
   it('should fetch a project by ID', async () => {
-    const newProject = { name: 'Project to Fetch via API', description: 'This project is created via API.' };
-    const createResponse = await request(server)
-      .post('/api/projects')
-      .send(newProject);
+    const newProject = {
+      name: 'Project to Fetch via API',
+      description: 'This project is created via API.',
+    };
+    const createResponse = await request(server).post('/api/projects').send(newProject);
 
     expect(createResponse.status).toBe(201);
     const projectId = createResponse.body.id;
@@ -132,9 +131,7 @@ describe('Projects API', () => {
   // New tests for error handling and edge cases
   it('should return 400 if creating a project with missing name', async () => {
     const newProject = { description: 'Project without a name.' };
-    const response = await request(server)
-      .post('/api/projects')
-      .send(newProject);
+    const response = await request(server).post('/api/projects').send(newProject);
 
     expect(response.status).toBe(400); // Assuming 400 for bad request due to validation
     expect(response.body.error).toHaveProperty('message');
@@ -185,8 +182,12 @@ describe('Projects API', () => {
     const projectId = project.id;
     cache.get.mockResolvedValueOnce(null); // Simulate cache miss
     // Mock data should have html_url as projectService maps it
-    const newReposFromGithub = [{ name: 'new-repo', description: 'new from github', html_url: 'new-url' }];
-    const expectedReposInResponse = [{ name: 'new-repo', description: 'new from github', url: 'new-url' }]; // What the service returns after mapping
+    const newReposFromGithub = [
+      { name: 'new-repo', description: 'new from github', html_url: 'new-url' },
+    ];
+    const expectedReposInResponse = [
+      { name: 'new-repo', description: 'new from github', url: 'new-url' },
+    ]; // What the service returns after mapping
     axios.get.mockResolvedValueOnce({ data: newReposFromGithub });
 
     const username = 'newUser';

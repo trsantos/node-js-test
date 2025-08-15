@@ -1,0 +1,12 @@
+# Ignore artifacts:
+node_modules
+coverage
+dist
+
+# Ignore lockfiles:
+package-lock.json
+yarn.lock
+
+# Ignore data:
+db_data
+cache_data

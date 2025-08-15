@@ -16,7 +16,7 @@ beforeAll((done) => {
 
 beforeEach(async () => {
   // Ensure database is ready and clear mocks
-  await new Promise(resolve => setTimeout(resolve, 100)); // Small delay for database readiness
+  await new Promise((resolve) => setTimeout(resolve, 100)); // Small delay for database readiness
   jest.clearAllMocks(); // Clear all mocks before each test
 });
 
@@ -29,9 +29,7 @@ describe('Tasks API', () => {
     const project = await Project.create({ name: 'Project for New Task', description: '...' });
     const projectId = project.id;
     const newTask = { title: 'Another Task', description: 'This is another test task.' };
-    const response = await request(server)
-      .post(`/api/projects/${projectId}/tasks`)
-      .send(newTask);
+    const response = await request(server).post(`/api/projects/${projectId}/tasks`).send(newTask);
 
     expect(response.status).toBe(201);
     expect(response.body).toHaveProperty('id');
@@ -41,7 +39,11 @@ describe('Tasks API', () => {
   });
 
   it('should update a task', async () => {
-    const task = await Task.create({ title: 'Task to Update', description: '...', ProjectId: projectId });
+    const task = await Task.create({
+      title: 'Task to Update',
+      description: '...',
+      ProjectId: projectId,
+    });
     const taskId = task.id;
     const updatedTitle = 'Updated Task Title';
     const response = await request(server)
@@ -53,7 +55,11 @@ describe('Tasks API', () => {
   });
 
   it('should delete a task', async () => {
-    const task = await Task.create({ title: 'Task to Delete', description: '...', ProjectId: projectId });
+    const task = await Task.create({
+      title: 'Task to Delete',
+      description: '...',
+      ProjectId: projectId,
+    });
     const taskId = task.id;
     const response = await request(server).delete(`/api/tasks/${taskId}`);
     expect(response.status).toBe(204);
@@ -75,12 +81,13 @@ describe('Tasks API', () => {
   });
 
   it('should return 400 if creating a task with missing title', async () => {
-    const project = await Project.create({ name: 'Project for Missing Title Task', description: '...' });
+    const project = await Project.create({
+      name: 'Project for Missing Title Task',
+      description: '...',
+    });
     const projectId = project.id;
     const newTask = { description: 'Task without a title.' };
-    const response = await request(server)
-      .post(`/api/projects/${projectId}/tasks`)
-      .send(newTask);
+    const response = await request(server).post(`/api/projects/${projectId}/tasks`).send(newTask);
 
     expect(response.status).toBe(400); // Assuming 400 for bad request due to validation
     expect(response.body.error).toHaveProperty('message');

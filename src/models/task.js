@@ -5,15 +5,15 @@ const Project = require('./project');
 const Task = sequelize.define('Task', {
   title: {
     type: DataTypes.STRING,
-    allowNull: false
+    allowNull: false,
   },
   description: {
-    type: DataTypes.TEXT
+    type: DataTypes.TEXT,
   },
   status: {
     type: DataTypes.ENUM('pending', 'in-progress', 'completed'),
-    defaultValue: 'pending'
-  }
+    defaultValue: 'pending',
+  },
 });
 
 Project.hasMany(Task);

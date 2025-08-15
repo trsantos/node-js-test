@@ -23,7 +23,7 @@ class ProjectService {
     return await projectRepository.delete(id);
   }
 
-    async getGithubRepos(projectId, username) {
+  async getGithubRepos(projectId, username) {
     const cacheKey = `github:${username}`;
     const project = await projectRepository.findById(projectId);
     if (!project) {
@@ -37,8 +37,14 @@ class ProjectService {
     }
 
     try {
-      const response = await axios.get(`https://api.github.com/users/${username}/repos?sort=updated&per_page=5`);
-      const repos = response.data.map(repo => ({ name: repo.name, description: repo.description, url: repo.html_url }));
+      const response = await axios.get(
+        `https://api.github.com/users/${username}/repos?sort=updated&per_page=5`
+      );
+      const repos = response.data.map((repo) => ({
+        name: repo.name,
+        description: repo.description,
+        url: repo.html_url,
+      }));
       await cache.set(cacheKey, JSON.stringify(repos), 'EX', 600);
       await projectRepository.update(projectId, { githubRepos: repos });
       project.githubRepos = repos;

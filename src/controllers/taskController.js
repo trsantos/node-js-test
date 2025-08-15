@@ -12,16 +12,17 @@ class TaskController {
       return next(err);
     }
 
-    taskService.create({ title, description, status, ProjectId: projectId })
-      .then(task => res.status(201).json(task))
-      .catch(error => {
+    taskService
+      .create({ title, description, status, ProjectId: projectId })
+      .then((task) => res.status(201).json(task))
+      .catch((error) => {
         if (error instanceof ForeignKeyConstraintError || error.message === 'Project not found') {
           const err = new Error('Project not found');
           err.statusCode = 404;
           return next(err);
         }
         if (error instanceof ValidationError) {
-          const err = new Error(error.errors.map(e => e.message).join(', '));
+          const err = new Error(error.errors.map((e) => e.message).join(', '));
           err.statusCode = 400;
           return next(err);
         }

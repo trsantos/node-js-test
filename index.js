@@ -11,14 +11,17 @@ app.use('/api', routes);
 app.use(errorHandler);
 
 if (require.main === module) {
-  sequelize.sync().then(() => {
-    console.log('Database synchronized');
-    app.listen(port, () => {
-      console.log(`Server is running on port ${port}`);
+  sequelize
+    .sync()
+    .then(() => {
+      console.log('Database synchronized');
+      app.listen(port, () => {
+        console.log(`Server is running on port ${port}`);
+      });
+    })
+    .catch((err) => {
+      console.error('Unable to synchronize the database:', err);
     });
-  }).catch(err => {
-    console.error('Unable to synchronize the database:', err);
-  });
 }
 
 module.exports = app;

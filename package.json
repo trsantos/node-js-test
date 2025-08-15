@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "docker-compose exec app npm run test:container",
-    "test:container": "jest --forceExit"
+    "test:container": "jest --forceExit",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
   },
   "jest": {
     "globalSetup": "./jest-setup/global-setup.js",
@@ -23,6 +25,7 @@
   },
   "devDependencies": {
     "jest": "^30.0.5",
+    "prettier": "^3.6.2",
     "supertest": "^7.1.4"
   }
 }
