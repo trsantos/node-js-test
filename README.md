@@ -25,6 +25,8 @@ The project follows a layered architecture to ensure separation of concerns and 
 - `src/services`: Contains the business logic of the application. It interacts with the repositories layer and external APIs.
 - `src/repositories`: Handles data access logic, interacting directly with the database models.
 - `src/models`: Defines the database schemas using Sequelize.
+- `src/middleware`: Contains custom middleware, such as the centralized error handler.
+- `src/validators`: Contains input validation rules for the API endpoints.
 - `src/routes`: Defines the API endpoints and maps them to controller methods.
 - `index.js`: The main application file, responsible for setting up the Express server and connecting to the database.
 
@@ -60,8 +62,6 @@ To run this API locally, you need to have Docker and Docker Compose installed on
     - Start the MariaDB database container.
     - Start the Valkey cache container.
     - Expose the API on port `3000`.
-    - Expose the MariaDB database on port `3306`.
-    - Expose the Valkey cache on port `6380`.
 
 4.  **Verify the API is running:**
 
@@ -152,8 +152,7 @@ All API endpoints are prefixed with `/api`.
 
 Here are some potential next steps for improving this project:
 
-1.  **Implement Input Validation:** Add robust validation for all incoming API requests to ensure data integrity and improve security.
-2.  **Add Authentication and Authorization:** Implement a security mechanism (e.g., JWT) to control access to API endpoints.
-3.  **Improve Error Handling:** Create a centralized error handling middleware for consistent and informative error responses.
-4.  **Add Logging:** Integrate a logging library to record application events and errors.
-5.  **Implement Unit and Integration Tests:** Reintroduce automated testing to ensure code quality and prevent regressions.
+1.  **Add Authentication and Authorization:** Implement a security mechanism (e.g., JWT) to control access to API endpoints, ensuring that only authenticated and authorized users can manage projects and tasks.
+2.  **Implement a Structured Logger:** Replace the basic `console.error` logging with a more robust, production-ready logger like Pino or Winston. This will enable structured, leveled logging, which is essential for effective monitoring and debugging in a production environment.
+3.  **Expand Test Coverage:** While the current test suite is robust, it could be expanded to include more complex integration scenarios, performance tests, and security-focused tests to identify potential vulnerabilities.
+4.  **Implement Caching for More Endpoints:** Consider adding caching to other frequently accessed, read-only endpoints (e.g., `GET /api/projects/:id`) to further improve performance and reduce database load.

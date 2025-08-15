@@ -48,8 +48,6 @@ To run this API locally, you need to have Docker and Docker Compose installed.
     - Start the MariaDB database container.
     - Start the Valkey cache container.
     - Expose the API on port `3000`.
-    - Expose the MariaDB database on port `3306`.
-    - Expose the Valkey cache on port `6380`.
 
 3.  **Verify the API is running:**
     Open your browser or use `curl` to access:
